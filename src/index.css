@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&family=Inter:wght@300;400;500&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--foreground));
+  --color-popover: hsl(var(--card));
+  --color-popover-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-secondary: hsl(var(--muted));
+  --color-secondary-foreground: hsl(var(--foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(0 0% 100%);
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+}
+
+:root, .dark {
+  --background: 240 15% 4%;
+  --foreground: 0 0% 95%;
+  --primary: 262 83% 68%;
+  --accent: 187 96% 43%;
+  --muted: 240 10% 15%;
+  --muted-foreground: 240 5% 60%;
+  --border: 240 10% 18%;
+  --card: 240 13% 7%;
+  --input: 240 10% 18%;
+  --ring: 262 83% 68%;
+}
+
+@layer base {
+  * { @apply border-border; }
+  body {
+    @apply font-sans antialiased bg-background text-foreground overflow-x-hidden;
+    /* Subtle dot grid overlay */
+    background-image: radial-gradient(circle, hsl(262 83% 68% / 0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
+}
+
+.text-display { font-family: var(--font-display); }
+
+/* ─── AMBIENT BACKGROUND GLOWS ─── */
+body::before {
+  content: '';
+  position: fixed;
+  top: -20vh;
+  left: -10vw;
+  width: 60vw;
+  height: 60vh;
+  background: radial-gradient(ellipse, hsl(262 83% 68% / 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -20vh;
+  right: -10vw;
+  width: 60vw;
+  height: 60vh;
+  background: radial-gradient(ellipse, hsl(187 96% 43% / 0.10) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── NEON GLOW UTILITIES ─── */
+.glow-primary {
+  box-shadow: 0 0 15px 2px hsl(262 83% 68% / 0.4),
+              0 0 40px 5px hsl(262 83% 68% / 0.15),
+              inset 0 0 15px hsl(262 83% 68% / 0.05);
+}
+.glow-primary-hover:hover {
+  box-shadow: 0 0 20px 4px hsl(262 83% 68% / 0.6),
+              0 0 60px 10px hsl(262 83% 68% / 0.2);
+}
+.glow-accent {
+  box-shadow: 0 0 15px 2px hsl(187 96% 43% / 0.4),
+              0 0 40px 5px hsl(187 96% 43% / 0.15);
+}
+.glow-accent-hover:hover {
+  box-shadow: 0 0 20px 4px hsl(187 96% 43% / 0.6),
+              0 0 60px 10px hsl(187 96% 43% / 0.2);
+}
+.glow-pink {
+  box-shadow: 0 0 15px 2px hsl(330 81% 60% / 0.4),
+              0 0 40px 5px hsl(330 81% 60% / 0.15);
+}
+.glow-pink-hover:hover {
+  box-shadow: 0 0 20px 4px hsl(330 81% 60% / 0.6),
+              0 0 60px 10px hsl(330 81% 60% / 0.2);
+}
+
+/* ─── NEON TEXT GLOW ─── */
+.text-neon-purple { text-shadow: 0 0 10px hsl(262 83% 68% / 0.8), 0 0 30px hsl(262 83% 68% / 0.4); }
+.text-neon-cyan   { text-shadow: 0 0 10px hsl(187 96% 43% / 0.8), 0 0 30px hsl(187 96% 43% / 0.4); }
+
+/* ─── SCANLINE OVERLAY (subtle) ─── */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    hsl(0 0% 0% / 0.04) 3px,
+    hsl(0 0% 0% / 0.04) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─── CLIP CORNER ACCENT ─── */
+.clip-corner {
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+
+/* ─── NEON BORDER ANIMATION ─── */
+@keyframes border-glow {
+  0%, 100% { border-color: hsl(262 83% 68% / 0.4); }
+  50%       { border-color: hsl(262 83% 68% / 0.9); }
+}
+.border-glow-anim {
+  animation: border-glow 3s ease-in-out infinite;
+}
+
+/* ─── CURSOR ─── */
+body { cursor: none; }
+a, button { cursor: none; }
