@@ -1,3 +1,4 @@
+# Workflow النشر: كل push إلى main يبني نسخة Vite ثم يرفع dist إلى GitHub Pages.
 name: Deploy Vite Project to GitHub Pages
 
 on:
@@ -11,6 +12,7 @@ permissions:
   id-token: write
 
 jobs:
+  # job واحد يجمع التثبيت والبناء والرفع حتى تكون النسخة المنشورة متطابقة مع main.
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
