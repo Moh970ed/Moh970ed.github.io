@@ -1,3 +1,4 @@
+// NavigationMenu: نظام تنقل متقدم مع viewport وروابط فرعية.
 import * as React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"

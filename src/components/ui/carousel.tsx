@@ -1,3 +1,4 @@
+// Carousel: شريط تمرير أفقي مبني على Embla مع controls قابلة لإعادة الاستخدام.
 import * as React from "react"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,

@@ -1,3 +1,4 @@
+// نظام Toast عام مبني على reducer وmemory state بدل ربطه بمكوّن واحد.
 import * as React from "react"
 
 import type {
@@ -5,6 +6,7 @@ import type {
   ToastProps,
 } from "@/components/ui/toast"
 
+// الموقع يعرض Toast واحدًا فقط، وتظل مدة الإزالة طويلة حتى يغلقه المستخدم أو النظام.
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
 
@@ -15,6 +17,7 @@ type ToasterToast = ToastProps & {
   action?: ToastActionElement
 }
 
+// أنواع الأحداث التي تغيّر حالة الإشعارات.
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
   UPDATE_TOAST: "UPDATE_TOAST",
@@ -24,6 +27,7 @@ const actionTypes = {
 
 let count = 0
 
+// مولد ID بسيط ومتزايد يكفي لتعريف الإشعارات داخل جلسة المتصفح.
 function genId() {
   count = (count + 1) % Number.MAX_SAFE_INTEGER
   return count.toString()
@@ -55,6 +59,7 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
+// بعد dismiss نؤجل الحذف الفعلي حتى تنتهي حركة الإغلاق.
 const addToRemoveQueue = (toastId: string) => {
   if (toastTimeouts.has(toastId)) {
     return
@@ -71,6 +76,7 @@ const addToRemoveQueue = (toastId: string) => {
   toastTimeouts.set(toastId, timeout)
 }
 
+// reducer مركزي يحافظ على تحديثات الحالة بشكل immutable.
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_TOAST":
@@ -130,6 +136,7 @@ const listeners: Array<(state: State) => void> = []
 
 let memoryState: State = { toasts: [] }
 
+// يحدّث الذاكرة ثم يبلغ كل المكونات المشتركة في هذا النظام.
 function dispatch(action: Action) {
   memoryState = reducer(memoryState, action)
   listeners.forEach((listener) => {
@@ -139,6 +146,7 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">
 
+// ينشئ Toast جديدًا ويرجع دوال update وdismiss للتحكم فيه لاحقًا.
 function toast({ ...props }: Toast) {
   const id = genId()
 
@@ -168,6 +176,7 @@ function toast({ ...props }: Toast) {
   }
 }
 
+// hook يربط المكوّن بحالة الذاكرة ويزيل listener عند unmount.
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
 

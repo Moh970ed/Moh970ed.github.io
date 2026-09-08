@@ -1,3 +1,4 @@
+// HoverCard: يعرض معلومات إضافية عند المرور أو التركيز.
 import * as React from "react"
 import * as HoverCardPrimitive from "@radix-ui/react-hover-card"
 

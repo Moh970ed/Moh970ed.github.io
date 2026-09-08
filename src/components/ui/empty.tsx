@@ -1,3 +1,4 @@
+// Empty: حالة واجهة موحدة عندما لا توجد بيانات لعرضها.
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"

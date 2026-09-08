@@ -1,3 +1,4 @@
+// Separator: خط فصل أفقي أو رأسي بين أجزاء الواجهة.
 import * as React from "react"
 import * as SeparatorPrimitive from "@radix-ui/react-separator"
 

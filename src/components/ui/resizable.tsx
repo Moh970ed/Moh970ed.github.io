@@ -1,5 +1,6 @@
 "use client"
 
+// Resizable: لوحات يمكن للمستخدم تغيير عرضها أو ارتفاعها.
 import { GripVertical } from "lucide-react"
 import * as ResizablePrimitive from "react-resizable-panels"
 

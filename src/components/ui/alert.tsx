@@ -1,3 +1,4 @@
+// Alert: رسالة تنبيه قابلة لتغيير الشكل حسب الحالة.
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 

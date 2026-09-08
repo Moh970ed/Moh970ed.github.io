@@ -1,3 +1,4 @@
+// Textarea: حقل نص متعدد الأسطر بنفس نظام input.
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

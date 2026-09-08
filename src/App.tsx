@@ -1,11 +1,13 @@
+// الملف الرئيسي للتطبيق: يجمع أقسام البورتفوليو ويشغّل كل المؤثرات التفاعلية.
 import React, { useEffect, useState, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import { Download, Mail, ChevronDown, Linkedin, ArrowRight, ExternalLink, Github } from "lucide-react";
+import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { Download, Mail, ChevronDown, Linkedin, ExternalLink, Github, Menu, X } from "lucide-react";
 import StickyTabs from "./components/StickyTabs";
 import { ShaderAnimation } from "./components/ShaderAnimation";
 import TextBlockAnimation from "./components/TextBlockAnimation";
 import { SiGithub, SiItchdotio, SiPython, SiCplusplus, SiJavascript, SiPhp, SiMysql, SiHtml5, SiGodotengine, SiGnubash, SiLinux, SiGit } from "react-icons/si";
 
+// مؤشر مخصص يظهر كنقطة وحلقة، ويتوسع عند المرور فوق الروابط والأزرار.
 function NeonCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
@@ -15,6 +17,7 @@ function NeonCursor() {
   const ringY = useSpring(cursorY, { stiffness: 150, damping: 20 });
   const [hovering, setHovering] = useState(false);
 
+  // نربط المؤشر بحركة الماوس ونراقب عناصر التفاعل الموجودة وقت التحميل.
   useEffect(() => {
     const move = (e: MouseEvent) => { cursorX.set(e.clientX); cursorY.set(e.clientY); };
     const onEnter = () => setHovering(true);
@@ -24,7 +27,13 @@ function NeonCursor() {
       el.addEventListener('mouseenter', onEnter);
       el.addEventListener('mouseleave', onLeave);
     });
-    return () => window.removeEventListener('mousemove', move);
+    return () => {
+      window.removeEventListener('mousemove', move);
+      document.querySelectorAll('a, button').forEach(el => {
+        el.removeEventListener('mouseenter', onEnter);
+        el.removeEventListener('mouseleave', onLeave);
+      });
+    };
   }, [cursorX, cursorY]);
 
   return (
@@ -44,6 +53,7 @@ function NeonCursor() {
   );
 }
 
+// شاشة البداية: تمنع التمرير مؤقتًا ثم تكشف الموقع بعد انتهاء الـ shader.
 function IntroAnimation({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState<"show" | "fadeout">("show");
 
@@ -98,9 +108,10 @@ function IntroAnimation({ onComplete }: { onComplete: () => void }) {
   );
 }
 
+// خلفية نجوم مرسومة على Canvas مع حركة بسيطة وتأثير parallax مع الماوس.
 function Starfield() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -112,7 +123,8 @@ function Starfield() {
     canvas.width = width;
     canvas.height = height;
 
-    const stars: {x: number, y: number, radius: number, vx: number, vy: number, alpha: number}[] = [];
+    // كل نجمة تحتفظ بموقعها وحجمها وسرعة حركتها وشفافيتها.
+    const stars: { x: number, y: number, radius: number, vx: number, vy: number, alpha: number }[] = [];
     const numStars = 150;
 
     for (let i = 0; i < numStars; i++) {
@@ -138,16 +150,17 @@ function Starfield() {
 
     let animationFrameId: number;
 
+    // حلقة الرسم المستمرة: تحدّث المواقع ثم تعيد رسم النجوم في كل frame.
     const render = () => {
       ctx.clearRect(0, 0, width, height);
-      
+
       stars.forEach(star => {
         star.x += star.vx;
         star.y += star.vy;
-        
+
         // Parallax effect
-        const dx = (mouseX - width/2) * 0.005;
-        const dy = (mouseY - height/2) * 0.005;
+        const dx = (mouseX - width / 2) * 0.005;
+        const dy = (mouseY - height / 2) * 0.005;
 
         let displayX = star.x - dx;
         let displayY = star.y - dy;
@@ -175,7 +188,7 @@ function Starfield() {
       canvas.width = width;
       canvas.height = height;
     };
-    
+
     window.addEventListener('resize', handleResize);
 
     return () => {
@@ -188,8 +201,21 @@ function Starfield() {
   return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none opacity-70" />;
 }
 
+// شريط التنقل الثابت؛ يتغير شكله بعد نزول المستخدم أكثر من 50px.
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navItems = [
+    { href: "#home", label: "Home" },
+    { href: "#about", label: "About" },
+    { href: "#education", label: "Education" },
+    { href: "#training", label: "Training" },
+    { href: "#skills", label: "Skills" },
+    { href: "#services", label: "Services" },
+    { href: "#projects", label: "Projects" },
+    { href: "#contact", label: "Contact" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -200,15 +226,16 @@ function Navbar() {
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-md border-b border-border py-4 shadow-[0_1px_20px_hsl(262_83%_68%/0.15)]' : 'bg-transparent py-6'}`}>
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
-        <a href="#" className="font-bold text-display text-xl tracking-wider text-white hover:text-neon-purple transition-colors">
+        <a href="#home" onClick={() => setMobileOpen(false)} className="font-bold text-display text-xl tracking-wider text-white hover:text-neon-purple transition-colors">
           M.ELSAYED
         </a>
-        
+
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium tracking-widest text-muted-foreground uppercase">
-          <a href="#about" className="hover:text-primary transition-colors">About</a>
-          <a href="#projects" className="hover:text-primary transition-colors">Projects</a>
-          <a href="#skills" className="hover:text-primary transition-colors">Skills</a>
-          <a href="#contact" className="hover:text-primary transition-colors">Contact</a>
+          {navItems.map((item) => (
+            <a key={item.href} href={item.href} className="hover:text-primary transition-colors">
+              {item.label}
+            </a>
+          ))}
         </nav>
 
         <div className="flex items-center gap-6">
@@ -219,7 +246,7 @@ function Navbar() {
             </span>
             <span className="text-xs font-mono uppercase tracking-widest text-green-500">Available</span>
           </div>
-          
+
           <a
             href="/CV_Mohammed_ElSayed.pdf"
             download
@@ -228,15 +255,44 @@ function Navbar() {
             <span>CV</span>
             <Download size={14} />
           </a>
+
+          <button
+            type="button"
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((open) => !open)}
+            className="md:hidden p-2 text-primary border border-primary/40 hover:bg-primary/10 transition-colors"
+          >
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
         </div>
       </div>
+
+      {mobileOpen && (
+        <nav className="md:hidden border-t border-primary/20 bg-background/95 backdrop-blur-md px-6 py-5">
+          <div className="container mx-auto flex flex-col gap-4 text-sm font-medium tracking-widest text-muted-foreground uppercase">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className="hover:text-primary transition-colors"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }
 
+// القسم التعريفي الأول: الاسم، الوظائف المتبدلة، الروابط والـ CTA الخاص بالسيرة الذاتية.
 function Hero() {
   const [roleIndex, setRoleIndex] = useState(0);
-  const roles = ["Game Developer", "Full-Stack Developer", "Cybersecurity Enthusiast"];
+  // النصوص التي تتبدل تلقائيًا كل ثلاث ثوانٍ بجانب اسم صاحب الموقع.
+  const roles = ["Game Developer", "Mobile App Developer", "Junior Software Engineer"];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -246,7 +302,7 @@ function Hero() {
   }, [roles.length]);
 
   return (
-    <section className="relative min-h-[100dvh] flex items-center px-6 md:px-12 pt-20 overflow-hidden z-10">
+    <section id="home" className="relative min-h-[100dvh] flex items-center px-6 md:px-12 pt-20 overflow-hidden z-10">
       <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden">
         <h1 className="text-[25vw] font-display font-black whitespace-nowrap tracking-tighter text-primary/20 opacity-[0.04]">
           MOHAMMED
@@ -283,7 +339,7 @@ function Hero() {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-pink-500 to-accent">EL-SAYED</span>
               </h1>
             </TextBlockAnimation>
-            
+
             <div className="h-12 overflow-hidden mb-6 flex items-center">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -299,16 +355,16 @@ function Hero() {
               </AnimatePresence>
             </div>
 
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
               className="text-lg md:text-xl text-muted-foreground max-w-xl mb-12"
             >
-              Software Engineering student based in Giza, Egypt. Building immersive digital experiences and secure systems.
+              Junior Software Engineer and Computer & AI undergraduate based in Giza, Egypt. Building interactive games and polished cross-platform mobile experiences.
             </motion.p>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
@@ -323,22 +379,21 @@ function Hero() {
               </a>
             </motion.div>
           </div>
-          
-          {/* Decorative floating element */}
-          <motion.div 
+
+          {/* صورة شخصية داخل نفس مساحة العنصر الزخرفي القديم حتى يظل الـ Hero متوازنًا. */}
+          <motion.div
             animate={{ y: [-10, 10, -10], rotate: [0, 2, -2, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-64 h-80 border border-primary/30 bg-card/40 backdrop-blur-sm p-6 glow-primary"
+            className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[px] h-[700px] border border-primary/30 bg-card/40 backdrop-blur-sm p-2 glow-primary clip-corner overflow-hidden"
           >
-            <div className="text-xs font-mono text-primary/70 mb-4 border-b border-primary/20 pb-2">SYS.INIT //</div>
-            <div className="space-y-2">
-              <div className="h-2 w-full bg-primary/20 rounded"></div>
-              <div className="h-2 w-3/4 bg-primary/20 rounded"></div>
-              <div className="h-2 w-5/6 bg-primary/20 rounded"></div>
-            </div>
-            <div className="mt-auto absolute bottom-6 right-6">
-              <div className="w-12 h-12 border-2 border-accent rounded-full animate-[spin_4s_linear_infinite] border-t-transparent"></div>
-            </div>
+            <img
+              src="/assets/images/profile/profile-photo.webp"
+              alt="Mohammed El-Sayed"
+              className="w-full h-full object-cover "
+              onError={(event) => {
+                event.currentTarget.src = "/assets/images/profile/profile-placeholder.svg";
+              }}
+            />
           </motion.div>
         </div>
       </div>
@@ -354,6 +409,7 @@ function Hero() {
   );
 }
 
+// شريط أفقي متحرك يكرر مجالات التخصص ليعطي الصفحة طابعًا بصريًا مستمرًا.
 function Marquee() {
   return (
     <div className="w-full relative z-10 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
@@ -367,9 +423,9 @@ function Marquee() {
             <React.Fragment key={i}>
               <span>GAME DEVELOPER</span>
               <span className="text-accent text-sm">✦</span>
-              <span>FULL-STACK</span>
+              <span>MOBILE APPS</span>
               <span className="text-accent text-sm">✦</span>
-              <span>CYBERSECURITY</span>
+              <span>FLUTTER</span>
               <span className="text-accent text-sm">✦</span>
               <span>GODOT</span>
               <span className="text-accent text-sm">✦</span>
@@ -383,6 +439,7 @@ function Marquee() {
   );
 }
 
+// عنوان موحد للأقسام: رقم كبير في الخلفية مع عنوان متحرك وخط سفلي.
 function SectionHeading({ title, num }: { title: string; num: string }) {
   return (
     <div className="mb-16 md:mb-24 flex items-end gap-6 border-b border-white/10 pb-6 relative">
@@ -408,11 +465,12 @@ function SectionHeading({ title, num }: { title: string; num: string }) {
   );
 }
 
+// قسم النبذة الشخصية فقط؛ التعليم والتدريب لهما قسمان مستقلان أسفل الصفحة.
 function About() {
   return (
     <section id="about" className="py-24 px-6 md:px-12 container mx-auto relative z-10">
-      <SectionHeading title="ABOUT_ME" num="01" />
-      
+      <SectionHeading title="ABOUT_ME" num="02" />
+
       <div className="grid md:grid-cols-2 gap-16 items-start">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -420,7 +478,7 @@ function About() {
           viewport={{ once: true }}
         >
           <p className="text-2xl md:text-4xl text-display font-bold leading-tight tracking-tight text-white mb-6">
-            Building robust systems, crafting immersive games, and breaking digital fortresses.
+            Turning ideas into interactive games and polished cross-platform mobile experiences.
           </p>
           <div className="w-16 h-1 bg-accent glow-accent"></div>
         </motion.div>
@@ -430,25 +488,12 @@ function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="flex flex-col gap-10"
+          className="flex flex-col gap-8"
         >
           <div className="prose prose-invert text-lg text-muted-foreground">
             <p>
-              My expertise spans the entire stack, from frontend interfaces to deep backend architectures and game engines. I approach engineering not just as code, but as a medium for interactive experiences and secure infrastructures. 
+              My primary focus is Game Development and Mobile Application Development. I build interactive 2D games with Godot and GDScript, and cross-platform mobile applications with Flutter and Dart. Web development, databases, Linux, and cybersecurity complement this core.
             </p>
-          </div>
-
-          <div className="relative border border-primary/30 bg-primary/5 p-8 glow-primary rounded-sm overflow-hidden group clip-corner scanlines">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent"></div>
-            <h3 className="text-xs font-mono uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-primary animate-pulse glow-primary"></span>
-              Education Base
-            </h3>
-            <p className="text-2xl font-bold text-white mb-1">Matrouh University</p>
-            <p className="text-muted-foreground mb-6">Faculty of Computers & Artificial Intelligence</p>
-            <div className="inline-flex px-3 py-1 bg-primary/20 text-primary font-mono text-sm border border-primary/30">
-              2024 &mdash; 2028
-            </div>
           </div>
         </motion.div>
       </div>
@@ -456,13 +501,82 @@ function About() {
   );
 }
 
+// قسم التعليم مستقل حتى يستطيع الزائر الوصول للمؤهل الأكاديمي مباشرة.
+function Education() {
+  return (
+    <section id="education" className="py-24 px-6 md:px-12 container mx-auto relative z-10">
+      <SectionHeading title="EDUCATION" num="03" />
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="relative max-w-3xl border border-primary/30 bg-primary/5 p-8 md:p-10 glow-primary clip-corner overflow-hidden"
+      >
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent"></div>
+        <p className="text-xs font-mono uppercase tracking-widest text-primary mb-4">Bachelor&apos;s Degree</p>
+        <h3 className="text-2xl md:text-4xl font-display font-bold text-white mb-3">
+          Faculty of Computers and Artificial Intelligence (FCAI)
+        </h3>
+        <p className="text-lg text-muted-foreground mb-6">Matrouh University — Matrouh, Egypt</p>
+        <span className="inline-flex px-3 py-1 bg-primary/20 text-primary font-mono text-sm border border-primary/30">
+          2024 &mdash; 2028 (Expected)
+        </span>
+      </motion.div>
+    </section>
+  );
+}
+
+// قسم التدريب يوضح الخبرة العملية الحالية بعيدًا عن التعليم الأكاديمي.
+function Training() {
+  return (
+    <section id="training" className="py-24 px-6 md:px-12 container mx-auto relative z-10">
+      <SectionHeading title="TRAINING" num="04" />
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="relative max-w-4xl border border-accent/30 bg-accent/5 p-8 md:p-10 glow-accent clip-corner overflow-hidden"
+      >
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent to-primary"></div>
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-8">
+          <div>
+            <p className="text-xs font-mono uppercase tracking-widest text-accent mb-3">Digital Egypt Builders Initiative (DEBI)</p>
+            <h3 className="text-2xl md:text-4xl font-display font-bold text-white">Flutter Developer Trainee</h3>
+          </div>
+          <span className="inline-flex self-start px-3 py-1 bg-accent/20 text-accent font-mono text-sm border border-accent/30 whitespace-nowrap">
+            July 2026 &mdash; Present
+          </span>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-3 text-muted-foreground">
+          {[
+            "Flutter and Dart",
+            "Cross-platform mobile development",
+            "Responsive interfaces",
+            "Widget-based UI development",
+            "Application logic",
+            "Prototyping",
+            "Testing and debugging",
+            "Software development best practices",
+          ].map((item) => (
+            <div key={item} className="flex items-center gap-3">
+              <span className="w-2 h-2 bg-accent rounded-full shrink-0"></span>
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </section>
+  );
+}
+
+// بيانات المشاريع منفصلة عن JSX حتى يمكن إضافة مشروع جديد من مكان واحد.
 const projects = [
   {
     num: "01",
     title: "AnderMagic",
-    desc: "A challenging 2D platformer built for precision and skill. Every level is hand-crafted to push the player's limits. Solo developed from concept to launch.",
-    longDesc: "Designed all mechanics, levels, and artwork as a solo developer using the Godot 4.6 engine and GDScript. Published and available on GitHub.",
-    tags: ["Godot 4.6", "GDScript", "2D Platformer", "Solo Dev"],
+    desc: "A 2D platformer focused on movement, jumping, magic mechanics, enemy interaction, and coin collection.",
+    longDesc: "Built as a solo project with Godot 4.6 and GDScript. Includes character controls, physics, state management, automated saving, enemy interactions, and a stable v1.2 release.",
+    tags: ["Godot 4.6", "GDScript", "2D Platformer", "Save System"],
     accentClass: "text-primary",
     borderClass: "border-primary/40",
     glowClass: "glow-primary",
@@ -471,12 +585,18 @@ const projects = [
     linkIcon: "github",
     year: "2024",
     type: "Game Development",
+    images: [
+      "/assets/images/projects/andermagic/cover.webp",
+      "/assets/images/projects/andermagic/screenshot-01.webp",
+      "/assets/images/projects/andermagic/screenshot-02.webp",
+      "/assets/images/projects/andermagic/gameplay.webp",
+    ],
   },
   {
     num: "02",
     title: "Hide and Sink",
-    desc: "A multiplayer game of strategy and deception. Players must outwit each other using misdirection, positioning, and timing.",
-    longDesc: "Co-developed with a partner, built for real-time multiplayer. Published and live on Itch.io for players to enjoy.",
+    desc: "A team-developed indie multiplayer game built around strategy, deception, and real-time player interaction.",
+    longDesc: "Contributed gameplay logic, mechanic prototyping, game systems, and audio-visual asset integration in a collaborative Godot/GDScript project published on Itch.io.",
     tags: ["Multiplayer", "Co-Dev", "Game Design", "Itch.io"],
     accentClass: "text-accent",
     borderClass: "border-accent/40",
@@ -486,13 +606,19 @@ const projects = [
     linkIcon: "external",
     year: "2024",
     type: "Game Development",
+    images: [
+      "/assets/images/projects/hide-and-sink/cover.webp",
+      "/assets/images/projects/hide-and-sink/screenshot-01.webp",
+      "/assets/images/projects/hide-and-sink/screenshot-02.webp",
+      "/assets/images/projects/hide-and-sink/gameplay.webp",
+    ],
   },
   {
     num: "03",
-    title: "Car-Wash Booking",
-    desc: "A full-stack reservation system — customers book slots, staff manage schedules, and the system keeps it all running.",
-    longDesc: "Built with PHP, JavaScript, and MySQL. Handles authentication, booking logic, slot availability, and a full admin panel for staff management.",
-    tags: ["PHP", "JavaScript", "MySQL", "HTML/CSS"],
+    title: "ShineHub Car Wash",
+    desc: "A software and management system project focused on application logic, booking workflows, and database-related functionality.",
+    longDesc: "An additional software project that demonstrates practical development of management-system concepts and database-backed application features.",
+    tags: ["Software Development", "Application Logic", "Database", "Management System"],
     accentClass: "text-pink-400",
     borderClass: "border-pink-500/40",
     glowClass: "glow-pink",
@@ -500,11 +626,41 @@ const projects = [
     linkLabel: "View on GitHub",
     linkIcon: "github",
     year: "2024",
-    type: "Full-Stack Web",
+    type: "Software / Management System",
+    images: [
+      "/assets/images/projects/shinehub/cover.webp",
+      "/assets/images/projects/shinehub/screenshot-01.webp",
+      "/assets/images/projects/shinehub/screenshot-02.webp",
+      "/assets/images/projects/shinehub/gameplay.webp",
+    ],
   },
 ];
 
+// بطاقة تفاصيل مشروع واحدة، وتُستخدم داخل تبويبات المشاريع.
 function ProjectContent({ p }: { p: typeof projects[0] }) {
+  const [activeImage, setActiveImage] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (p.images.length <= 1 || isPaused) return;
+
+    const timer = setInterval(() => {
+      setActiveImage((current) => (current + 1) % p.images.length);
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, [p.images.length, isPaused]);
+
+  const nextImage = () => {
+    setActiveImage((current) => (current + 1) % p.images.length);
+  };
+
+  const previousImage = () => {
+    setActiveImage(
+      (current) => (current - 1 + p.images.length) % p.images.length
+    );
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -513,6 +669,67 @@ function ProjectContent({ p }: { p: typeof projects[0] }) {
       transition={{ duration: 0.5 }}
       className="grid md:grid-cols-2 gap-12 md:gap-20 items-start"
     >
+      {/* سلايدر الصور الجديد مع أزرار التنقل والحركة */}
+      <div
+        className="md:col-span-2 relative aspect-[16/7] overflow-hidden border border-white/10 bg-gradient-to-br from-card via-background to-primary/10 clip-corner group"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={p.images[activeImage]}
+            src={p.images[activeImage]}
+            alt={`${p.title} project screenshot ${activeImage + 1}`}
+            className="absolute inset-0 w-full h-full object-cover"
+            initial={{ opacity: 0, scale: 1.04, x: 20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.98, x: -20 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
+            }}
+          />
+        </AnimatePresence>
+
+        {p.images.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={previousImage}
+              aria-label="Previous project image"
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/50 text-white hover:bg-primary transition-colors flex items-center justify-center text-xl"
+            >
+              ‹
+            </button>
+
+            <button
+              type="button"
+              onClick={nextImage}
+              aria-label="Next project image"
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/50 text-white hover:bg-primary transition-colors flex items-center justify-center text-xl"
+            >
+              ›
+            </button>
+
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+              {p.images.map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => setActiveImage(index)}
+                  aria-label={`Show image ${index + 1}`}
+                  className={`h-2 rounded-full transition-all ${
+                    index === activeImage
+                      ? "w-6 bg-primary"
+                      : "w-2 bg-white/50 hover:bg-white"
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
       {/* Left — big number + description */}
       <div>
         <div className={`text-[120px] md:text-[160px] font-black font-display leading-none tracking-tighter opacity-10 ${p.accentClass} -ml-2 mb-2 select-none`}>
@@ -568,12 +785,63 @@ function ProjectContent({ p }: { p: typeof projects[0] }) {
     </motion.div>
   );
 }
+//-------------------------------------------------------------
+// الخدمات التي يمكن تقديمها؛ منفصلة عن المهارات حتى يفهم الزائر قيمة العمل مباشرة.
+const services = [
+  {
+    title: "Game Development",
+    description: "I develop interactive 2D games using Godot and GDScript, focusing on gameplay mechanics, character controls, physics, state management, and game logic.",
+    accentClass: "text-primary",
+    borderClass: "border-primary/40",
+    glowClass: "glow-primary",
+  },
+  {
+    title: "Mobile App Development",
+    description: "I build cross-platform mobile applications with Flutter and Dart, focusing on responsive interfaces, clean application logic, and user-friendly experiences.",
+    accentClass: "text-accent",
+    borderClass: "border-accent/40",
+    glowClass: "glow-accent",
+  },
+  {
+    title: "Software Development",
+    description: "I build functional software solutions and prototypes designed to turn ideas into practical digital products.",
+    accentClass: "text-pink-400",
+    borderClass: "border-pink-500/40",
+    glowClass: "glow-pink",
+  },
+];
 
+// قسم الخدمات يوضح ما يمكن تنفيذه، بدل خلط الخدمات بقائمة الأدوات التقنية.
+function Services() {
+  return (
+    <section id="services" className="py-24 px-6 md:px-12 container mx-auto relative z-10">
+      <SectionHeading title="SERVICES" num="06" />
+      <div className="grid md:grid-cols-3 gap-6">
+        {services.map((service, index) => (
+          <motion.article
+            key={service.title}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
+            className={`relative border ${service.borderClass} bg-card/40 p-8 clip-corner ${service.glowClass}`}
+          >
+            <span className={`font-mono text-xs tracking-widest ${service.accentClass}`}>0{index + 1}</span>
+            <h3 className="text-2xl font-display font-bold text-white mt-8 mb-5">{service.title}</h3>
+            <p className="text-muted-foreground leading-relaxed">{service.description}</p>
+          </motion.article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// قسم المشاريع: يحول كل عنصر من البيانات إلى Sticky Tab مستقل.
 function Projects() {
   return (
     <section id="projects" className="relative z-10">
       <div className="py-24 px-6 md:px-12 container mx-auto">
-        <SectionHeading title="PROJECTS" num="02" />
+        <SectionHeading title="PROJECTS" num="07" />
       </div>
 
       <StickyTabs navHeight="72px">
@@ -595,6 +863,7 @@ function Projects() {
   );
 }
 
+// تصنيفات المهارات وألوانها وأيقوناتها؛ الـ null يعني استخدام أول حرف بدل أيقونة.
 const skillCategories = [
   {
     id: "languages",
@@ -607,20 +876,20 @@ const skillCategories = [
     hoverText: "group-hover:text-primary",
     hoverGlow: "group-hover:[filter:drop-shadow(0_0_8px_hsl(262_83%_68%/0.8))]",
     items: [
+      { name: "Dart", icon: null },
+      { name: "GDScript", icon: SiGodotengine },
       { name: "Python", icon: SiPython },
       { name: "C++", icon: SiCplusplus },
+      { name: "C", icon: null },
+      { name: "Java", icon: null },
       { name: "JavaScript", icon: SiJavascript },
       { name: "PHP", icon: SiPhp },
-      { name: "MySQL", icon: SiMysql },
-      { name: "HTML/CSS", icon: SiHtml5 },
-      { name: "GDScript", icon: SiGodotengine },
-      { name: "Bash", icon: SiGnubash },
-      { name: "Java", icon: null },
+      { name: "SQL", icon: SiMysql },
     ],
   },
   {
-    id: "tools",
-    cat: "Tools & Engines",
+    id: "game",
+    cat: "Game Development",
     accentClass: "text-accent",
     borderClass: "border-accent/40",
     glowClass: "glow-accent",
@@ -630,9 +899,55 @@ const skillCategories = [
     hoverGlow: "group-hover:[filter:drop-shadow(0_0_8px_hsl(187_96%_43%/0.8))]",
     items: [
       { name: "Godot Engine", icon: SiGodotengine },
+      { name: "2D Game Development", icon: null },
+      { name: "Gameplay Systems", icon: null },
+      { name: "Game Physics", icon: null },
+      { name: "Multiplayer", icon: null },
+      { name: "Pixel Art Integration", icon: null },
+    ],
+  },
+  {
+    id: "mobile",
+    cat: "Mobile Development",
+    accentClass: "text-primary",
+    borderClass: "border-primary/40",
+    glowClass: "glow-primary",
+    hoverBorder: "hover:border-primary",
+    hoverBg: "hover:bg-primary/10",
+    hoverText: "group-hover:text-primary",
+    hoverGlow: "group-hover:[filter:drop-shadow(0_0_8px_hsl(262_83%_68%/0.8))]",
+    items: [
+      { name: "Flutter", icon: null },
+      { name: "Dart", icon: null },
+      { name: "Cross-Platform Architecture", icon: null },
+      { name: "Responsive UI", icon: null },
+      { name: "Widget-Based Development", icon: null },
+      { name: "UI/UX Implementation", icon: null },
+    ],
+  },
+  {
+    id: "tools",
+    cat: "Web, Tools & Systems",
+    accentClass: "text-accent",
+    borderClass: "border-accent/40",
+    glowClass: "glow-accent",
+    hoverBorder: "hover:border-accent",
+    hoverBg: "hover:bg-accent/10",
+    hoverText: "group-hover:text-accent",
+    hoverGlow: "group-hover:[filter:drop-shadow(0_0_8px_hsl(187_96%_43%/0.8))]",
+    items: [
+      { name: "Godot Engine", icon: SiGodotengine },
+      { name: "HTML5 / CSS3", icon: SiHtml5 },
+      { name: "React", icon: null },
+      { name: "Bootstrap", icon: null },
       { name: "Git", icon: SiGit },
+      { name: "GitHub", icon: SiGithub },
       { name: "Linux", icon: SiLinux },
       { name: "Kali Linux", icon: SiLinux },
+      { name: "Bash", icon: SiGnubash },
+      { name: "PowerShell", icon: null },
+      { name: "VS Code", icon: null },
+      { name: "Terminal", icon: null },
     ],
   },
   {
@@ -654,6 +969,7 @@ const skillCategories = [
   },
 ];
 
+// شبكة مهارات قابلة لإعادة الاستخدام لأي تصنيف موجود في البيانات السابقة.
 function SkillGrid({ category }: { category: typeof skillCategories[0] }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -683,11 +999,12 @@ function SkillGrid({ category }: { category: typeof skillCategories[0] }) {
   );
 }
 
+// قسم المهارات ويستخدم نفس مكوّن التبويبات المستخدم في المشاريع.
 function Skills() {
   return (
     <section id="skills" className="relative z-10">
       <div className="py-24 px-6 md:px-12 container mx-auto">
-        <SectionHeading title="SYSTEM_SKILLS" num="03" />
+        <SectionHeading title="SYSTEM_SKILLS" num="05" />
       </div>
 
       <StickyTabs navHeight="72px">
@@ -708,19 +1025,20 @@ function Skills() {
   );
 }
 
+// نهاية الصفحة: دعوة للتواصل، روابط الحسابات وحقوق النشر.
 function Footer() {
   return (
     <footer id="contact" className="pt-32 pb-12 px-6 md:px-12 container mx-auto relative z-10 border-t border-border mt-20">
       <div className="flex flex-col items-center text-center relative">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[300px] bg-accent/10 blur-[120px] rounded-full pointer-events-none -z-10"></div>
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-5xl md:text-8xl lg:text-[10vw] font-black text-display uppercase tracking-tighter leading-none mb-12 text-white"
         >
-          <span className="text-neon-purple">LET'S BUILD</span> <br/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">THE FUTURE</span>
+          <span className="text-neon-purple">HAVE AN IDEA</span> <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">WORTH BUILDING?</span>
         </motion.h2>
 
         <motion.div
@@ -728,13 +1046,32 @@ function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
+          className="max-w-2xl"
         >
-          <a 
-            href="mailto:mohammed.elsayed.m.970@gmail.com" 
-            className="text-xl md:text-3xl font-mono text-white hover:text-accent transition-colors pb-2 border-b border-accent inline-block mb-16 glow-accent-hover hover:border-accent shadow-[0_4px_15px_-3px_hsl(187_96%_43%/0.4)]"
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-10">
+            Whether you&apos;re looking to build a game, develop a mobile application, or turn an idea into a working digital product, I&apos;d be happy to connect and explore what&apos;s possible.
+          </p>
+          <a
+            href="mailto:mohammed.elsayed.m.970@gmail.com"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-accent text-background font-bold tracking-widest uppercase text-sm rounded-sm hover:bg-white transition-all duration-300 glow-accent-hover mb-10"
           >
-            mohammed.elsayed.m.970@gmail.com
+            <span>Let&apos;s Talk</span>
+            <ExternalLink size={18} />
           </a>
+          <div>
+            <a
+              href="mailto:mohammed.elsayed.m.970@gmail.com"
+              className="text-xl md:text-3xl font-mono text-white hover:text-accent transition-colors pb-2 border-b border-accent inline-block mb-4 glow-accent-hover hover:border-accent shadow-[0_4px_15px_-3px_hsl(187_96%_43%/0.4)]"
+            >
+              mohammed.elsayed.m.970@gmail.com
+            </a>
+            <a
+              href="tel:+201062323271"
+              className="text-base md:text-xl font-mono text-muted-foreground hover:text-accent transition-colors -mt-10 mb-16"
+            >
+              +20 106 232 3271
+            </a>
+          </div>
         </motion.div>
 
         <div className="flex gap-8 mb-16">
@@ -748,9 +1085,9 @@ function Footer() {
             <SiItchdotio size={24} />
           </a>
         </div>
-        
+
         <div className="text-xs font-mono uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-          <span>SYS.OFFLINE</span>
+          <span>OPEN TO BUILD</span>
           <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
           <span>&copy; {new Date().getFullYear()} Mohammed El-Sayed</span>
         </div>
@@ -759,6 +1096,7 @@ function Footer() {
   );
 }
 
+// نقطة تركيب الموقع: تتحكم في انتهاء شاشة البداية وترتب الأقسام الرئيسية.
 export default function App() {
   const [introDone, setIntroDone] = useState(false);
 
@@ -782,15 +1120,18 @@ export default function App() {
 
       <Starfield />
       <Navbar />
-      
+
       <main className="overflow-hidden">
         <Hero />
         <Marquee />
         <About />
-        <Projects />
+        <Education />
+        <Training />
         <Skills />
+        <Services />
+        <Projects />
       </main>
-      
+
       <Footer />
     </div>
   );

@@ -1,8 +1,10 @@
+/* ملف التصميم العام: fonts وTailwind ومتغيرات الألوان والأدوات البصرية للموقع كله. */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&family=Inter:wght@300;400;500&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
+/* ربط أسماء ألوان Tailwind بمتغيرات HSL حتى يمكن تغيير الثيم من مكان واحد. */
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -27,6 +29,7 @@
   --font-display: 'Space Grotesk', sans-serif;
 }
 
+/* لوحة الألوان الأساسية ذات الخلفية الداكنة واللمسات البنفسجية/السماوية. */
 :root, .dark {
   --background: 240 15% 4%;
   --foreground: 0 0% 95%;
@@ -40,8 +43,10 @@
   --ring: 262 83% 68%;
 }
 
+/* قواعد الأساس: شكل الصفحة، الخطوط، والخلفية الشبكية الخفيفة. */
 @layer base {
   * { @apply border-border; }
+  html { scroll-behavior: smooth; }
   body {
     @apply font-sans antialiased bg-background text-foreground overflow-x-hidden;
     /* Subtle dot grid overlay */
@@ -49,11 +54,14 @@
     background-size: 32px 32px;
   }
   h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
+  section { scroll-margin-top: 88px; }
 }
 
+/* خط العناوين المستخدم في النصوص الكبيرة ذات الطابع التقني. */
 .text-display { font-family: var(--font-display); }
 
 /* ─── AMBIENT BACKGROUND GLOWS ─── */
+/* توهج بنفسجي ثابت في أعلى اليسار لإضافة عمق للخلفية. */
 body::before {
   content: '';
   position: fixed;
@@ -65,6 +73,7 @@ body::before {
   pointer-events: none;
   z-index: 0;
 }
+/* توهج سماوي ثابت في أسفل اليمين يكمل التدرج البصري. */
 body::after {
   content: '';
   position: fixed;
@@ -77,7 +86,7 @@ body::after {
   z-index: 0;
 }
 
-/* ─── NEON GLOW UTILITIES ─── */
+/* ─── أدوات الظلال المضيئة للأزرار والبطاقات ─── */
 .glow-primary {
   box-shadow: 0 0 15px 2px hsl(262 83% 68% / 0.4),
               0 0 40px 5px hsl(262 83% 68% / 0.15),
@@ -104,11 +113,11 @@ body::after {
               0 0 60px 10px hsl(330 81% 60% / 0.2);
 }
 
-/* ─── NEON TEXT GLOW ─── */
+/* ─── توهج النصوص البنفسجي والسماوي ─── */
 .text-neon-purple { text-shadow: 0 0 10px hsl(262 83% 68% / 0.8), 0 0 30px hsl(262 83% 68% / 0.4); }
 .text-neon-cyan   { text-shadow: 0 0 10px hsl(187 96% 43% / 0.8), 0 0 30px hsl(187 96% 43% / 0.4); }
 
-/* ─── SCANLINE OVERLAY (subtle) ─── */
+/* ─── خطوط شاشة خفيفة فوق البطاقات ذات class scanlines ─── */
 .scanlines::after {
   content: '';
   position: absolute;
@@ -124,12 +133,12 @@ body::after {
   z-index: 1;
 }
 
-/* ─── CLIP CORNER ACCENT ─── */
+/* ─── قص زوايا البطاقات لإعطائها شكلًا تقنيًا ─── */
 .clip-corner {
   clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
 }
 
-/* ─── NEON BORDER ANIMATION ─── */
+/* ─── حركة نبض لون الحدود ─── */
 @keyframes border-glow {
   0%, 100% { border-color: hsl(262 83% 68% / 0.4); }
   50%       { border-color: hsl(262 83% 68% / 0.9); }
@@ -138,6 +147,6 @@ body::after {
   animation: border-glow 3s ease-in-out infinite;
 }
 
-/* ─── CURSOR ─── */
+/* إخفاء مؤشر النظام لأن App يرسم مؤشر NeonCursor مخصصًا. */
 body { cursor: none; }
 a, button { cursor: none; }

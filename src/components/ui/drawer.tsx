@@ -1,3 +1,4 @@
+// Drawer: لوحة قابلة للسحب من طرف الشاشة باستخدام vaul.
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
 

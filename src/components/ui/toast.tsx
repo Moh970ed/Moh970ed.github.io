@@ -1,3 +1,4 @@
+// Toast: مكونات الإشعار الفردي، مع variants وحركة إغلاق.
 import * as React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"

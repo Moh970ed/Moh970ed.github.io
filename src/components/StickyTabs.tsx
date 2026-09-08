@@ -1,6 +1,8 @@
+// حاوية أقسام تجعل عنوان كل قسم sticky أثناء قراءة محتواه.
 import React, { Children, isValidElement } from 'react';
 import clsx from 'clsx';
 
+// الـ props التي يحتاجها كل قسم: عنوانه، رقمه، ألوانه ومحتواه الداخلي.
 export interface StickyTabItemProps {
   title: string;
   num?: string;
@@ -11,6 +13,7 @@ export interface StickyTabItemProps {
   children: React.ReactNode;
 }
 
+// هذا المكوّن marker فقط؛ الأب يقرأ props الخاصة به ويرسم الواجهة الفعلية.
 const StickyTabItem: React.FC<StickyTabItemProps> = () => null;
 
 interface StickyTabsProps {
@@ -18,6 +21,7 @@ interface StickyTabsProps {
   navHeight?: string;
 }
 
+// المكوّن الأب يفلتر الأبناء إلى StickyTabs.Item ثم يبني لكل واحد section مستقل.
 const StickyTabs: React.FC<StickyTabsProps> & { Item: React.FC<StickyTabItemProps> } = ({
   children,
   navHeight = '72px',
@@ -27,6 +31,7 @@ const StickyTabs: React.FC<StickyTabsProps> & { Item: React.FC<StickyTabItemProp
   return (
     <div className="overflow-clip">
       {Children.map(children, (child) => {
+        // تجاهل أي child ليس من نوع StickyTabs.Item لتجنب رسم عناصر غير متوقعة.
         if (!isValidElement(child) || child.type !== StickyTabItem) return null;
 
         const item = child as React.ReactElement<StickyTabItemProps>;
@@ -42,7 +47,7 @@ const StickyTabs: React.FC<StickyTabsProps> & { Item: React.FC<StickyTabItemProp
 
         return (
           <section key={id} className="relative">
-            {/* Sticky title header */}
+            {/* رأس ثابت يظل ظاهرًا أثناء التمرير داخل محتوى القسم. */}
             <div
               className={clsx(
                 'sticky z-20 -mt-px',
@@ -67,11 +72,11 @@ const StickyTabs: React.FC<StickyTabsProps> & { Item: React.FC<StickyTabItemProp
                   accentClass.replace('text-', 'bg-').replace('/40', '').replace('/60', '')
                 )} />
               </div>
-              {/* Neon bottom line */}
+              {/* خط زخرفي سفلي يستخدم لون الـ glow الخاص بالقسم. */}
               <div className={clsx('absolute bottom-0 left-0 w-full h-[1px] opacity-50', glowClass)} />
             </div>
 
-            {/* Section content */}
+            {/* محتوى القسم الذي مرره المستهلك بين وسمَي StickyTabs.Item. */}
             <div className="mx-auto max-w-7xl px-6 md:px-12 py-16">
               {content}
             </div>

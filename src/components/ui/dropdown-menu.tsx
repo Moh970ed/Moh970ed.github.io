@@ -1,5 +1,6 @@
 "use client"
 
+// DropdownMenu: قائمة منسدلة accessible مع دعم لوحة المفاتيح.
 import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"

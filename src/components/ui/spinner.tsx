@@ -1,3 +1,4 @@
+// Spinner: مؤشر تحميل صغير قابل لتغيير className.
 import { Loader2Icon } from "lucide-react"
 
 import { cn } from "@/lib/utils"

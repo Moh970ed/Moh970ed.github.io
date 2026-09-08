@@ -1,5 +1,6 @@
 "use client"
 
+// Field: غلاف موحد للـ label وinput ورسائل المساعدة أو الخطأ.
 import { useMemo } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 

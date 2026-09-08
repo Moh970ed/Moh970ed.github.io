@@ -1,3 +1,4 @@
+// Chart: طبقة تنسيق مشتركة لمكونات Recharts والـ tooltip والـ legend.
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 

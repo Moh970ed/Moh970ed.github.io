@@ -1,5 +1,6 @@
 "use client"
 
+// Avatar: صورة المستخدم مع fallback عند غياب الصورة أو فشل تحميلها.
 import * as React from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
 

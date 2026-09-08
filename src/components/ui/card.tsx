@@ -1,3 +1,4 @@
+// Card: حاوية قابلة للتركيب من header وcontent وfooter.
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

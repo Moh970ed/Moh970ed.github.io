@@ -1,3 +1,4 @@
+// Checkbox: مربع اختيار accessible مع أيقونة حالة الاختيار.
 import * as React from "react"
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
 import { Check } from "lucide-react"

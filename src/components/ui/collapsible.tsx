@@ -1,5 +1,6 @@
 "use client"
 
+// Collapsible: يفتح ويغلق محتوى مرتبطًا بزر أو trigger.
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible"
 
 const Collapsible = CollapsiblePrimitive.Root

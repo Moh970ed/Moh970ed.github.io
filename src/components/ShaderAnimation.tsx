@@ -1,6 +1,8 @@
+// خلفية افتتاحية ثلاثية الأبعاد مع بديل CSS للأجهزة التي لا تدعم WebGL.
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
+// بديل خفيف يعتمد على حلقات CSS عندما لا يتوفر WebGL.
 function CssFallback() {
   return (
     <div className="w-full h-full relative overflow-hidden" style={{ background: "#000" }}>
@@ -20,6 +22,7 @@ function CssFallback() {
           will-change: transform, opacity;
         }
       `}</style>
+      {/* تكرار الحلقات مع أحجام وألوان وتأخيرات مختلفة لصناعة موجة مستمرة. */}
       {Array.from({ length: 18 }).map((_, i) => {
         const size = 80 + i * 40;
         const delay = (i * 0.22).toFixed(2);
@@ -49,6 +52,7 @@ function CssFallback() {
   );
 }
 
+// نسخة WebGL: ترسم fullscreen shader على Plane واحد باستخدام Three.js.
 function WebGLShader() {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<{
@@ -61,8 +65,10 @@ function WebGLShader() {
     if (!containerRef.current) return;
     const container = containerRef.current;
 
+    // الـ vertex shader يترك الـ plane بحجمه الكامل دون تحويلات إضافية.
     const vertexShader = `void main() { gl_Position = vec4(position, 1.0); }`;
 
+    // الـ fragment shader يحسب خطوطًا/حلقات لونية لكل pixel اعتمادًا على الوقت.
     const fragmentShader = `
       #define TWO_PI 6.2831853072
       precision highp float;
@@ -101,6 +107,7 @@ function WebGLShader() {
     renderer.setPixelRatio(window.devicePixelRatio);
     container.appendChild(renderer.domElement);
 
+    // مزامنة حجم renderer ودقة الـ shader مع أبعاد العنصر والـ device pixel ratio.
     const onResize = () => {
       const w = container.clientWidth;
       const h = container.clientHeight;
@@ -111,6 +118,7 @@ function WebGLShader() {
     window.addEventListener("resize", onResize, false);
 
     let animationId = 0;
+    // تحديث uniform الخاص بالوقت وإعادة الرسم في كل إطار.
     const animate = () => {
       animationId = requestAnimationFrame(animate);
       uniforms.time.value += 0.05;
@@ -121,6 +129,7 @@ function WebGLShader() {
     sceneRef.current = { renderer, uniforms, animationId: 0 };
     animate();
 
+    // تنظيف listener وanimation frame وموارد Three.js عند إزالة المكوّن.
     return () => {
       window.removeEventListener("resize", onResize);
       if (sceneRef.current) {
@@ -140,6 +149,7 @@ function WebGLShader() {
   );
 }
 
+// فحص بسيط قبل محاولة إنشاء WebGLRenderer حتى لا يتعطل الموقع على متصفح غير مدعوم.
 function isWebGLAvailable(): boolean {
   try {
     const canvas = document.createElement("canvas");
@@ -152,6 +162,7 @@ function isWebGLAvailable(): boolean {
   }
 }
 
+// يختار نسخة WebGL مرة واحدة عند mount ثم يعرض البديل إن لزم.
 export function ShaderAnimation() {
   const [webgl] = useState(() => isWebGLAvailable());
   return webgl ? <WebGLShader /> : <CssFallback />;

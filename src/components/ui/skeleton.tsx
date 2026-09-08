@@ -1,3 +1,4 @@
+// Skeleton: مساحة placeholder توضح أن المحتوى ما زال يُحمّل.
 import { cn } from "@/lib/utils"
 
 function Skeleton({

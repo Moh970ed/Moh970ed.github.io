@@ -1,3 +1,4 @@
+// Accordion: أقسام قابلة للفتح والإغلاق مع دعم الوصول من Radix.
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { ChevronDown } from "lucide-react"

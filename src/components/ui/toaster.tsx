@@ -1,3 +1,4 @@
+// Toaster: يقرأ حالة use-toast ويرسم قائمة الإشعارات الحالية.
 import { useToast } from "@/hooks/use-toast"
 import {
   Toast,

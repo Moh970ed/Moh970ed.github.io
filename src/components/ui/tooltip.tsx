@@ -1,5 +1,6 @@
 "use client"
 
+// Tooltip: تلميح قصير يظهر عند hover أو focus.
 import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 

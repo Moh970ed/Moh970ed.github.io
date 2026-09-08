@@ -1,5 +1,6 @@
 "use client"
 
+// Sonner: يضبط مظهر مكتبة الإشعارات حسب ثيم التطبيق.
 import { useTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner"
 

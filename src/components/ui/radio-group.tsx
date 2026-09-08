@@ -1,3 +1,4 @@
+// RadioGroup: مجموعة خيارات يسمح فيها باختيار قيمة واحدة.
 import * as React from "react"
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
 import { Circle } from "lucide-react"

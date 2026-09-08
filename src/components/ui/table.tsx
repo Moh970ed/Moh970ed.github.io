@@ -1,3 +1,4 @@
+// Table: عناصر جدول منفصلة لتكوين جداول semantic بسهولة.
 import * as React from "react"
 
 import { cn } from "@/lib/utils"

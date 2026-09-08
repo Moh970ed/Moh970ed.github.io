@@ -1,3 +1,4 @@
+// InputGroup: يجمع input مع addons أو أزرار مرتبطة به.
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 

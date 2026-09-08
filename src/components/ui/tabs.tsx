@@ -1,3 +1,4 @@
+// Tabs: تبويبات accessible تربط triggers بالمحتوى.
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 

@@ -1,6 +1,8 @@
+// صفحة احتياطية لأي route غير موجود، حتى لو كان الموقع الحالي صفحة واحدة.
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 
+// تعرض رسالة الخطأ وتوفر واجهة ثابتة للمستخدم عند الوصول إلى مسار غير معروف.
 export default function NotFound() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">

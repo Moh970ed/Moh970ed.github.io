@@ -1,3 +1,4 @@
+// Badge: شارة صغيرة لعرض label أو حالة مختصرة.
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 

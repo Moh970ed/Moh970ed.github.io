@@ -1,5 +1,6 @@
 "use client"
 
+// ToggleGroup: مجموعة أزرار toggle لاختيار عنصر أو أكثر.
 import * as React from "react"
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group"
 import { type VariantProps } from "class-variance-authority"

@@ -1,3 +1,4 @@
+// Input: حقل نص أساسي بتنسيق الموقع ودعم كل props الأصلية.
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
