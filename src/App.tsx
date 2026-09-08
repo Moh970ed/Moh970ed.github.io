@@ -1065,12 +1065,7 @@ function Footer() {
             >
               mohammed.elsayed.m.970@gmail.com
             </a>
-            <a
-              href="tel:+201062323271"
-              className="text-base md:text-xl font-mono text-muted-foreground hover:text-accent transition-colors -mt-10 mb-16"
-            >
-              +20 106 232 3271
-            </a>
+
           </div>
         </motion.div>
 
