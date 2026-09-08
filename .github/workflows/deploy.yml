@@ -1,4 +1,3 @@
-# Workflow النشر: كل push إلى main يبني نسخة Vite ثم يرفع dist إلى GitHub Pages.
 name: Deploy Vite Project to GitHub Pages
 
 on:
@@ -12,7 +11,6 @@ permissions:
   id-token: write
 
 jobs:
-  # job واحد يجمع التثبيت والبناء والرفع حتى تكون النسخة المنشورة متطابقة مع main.
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
@@ -22,18 +20,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build project
-        run: npm run build
+        run: npx vite build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist' # Vite default build output folder
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
