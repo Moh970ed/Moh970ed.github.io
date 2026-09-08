@@ -1,0 +1,17 @@
+<svg width="800" height="1000" viewBox="0 0 800 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="800" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#171228"/>
+      <stop offset="1" stop-color="#06191F"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="150" y1="150" x2="650" y2="850" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#06B6D4"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#background)"/>
+  <circle cx="400" cy="330" r="150" fill="url(#accent)" fill-opacity="0.25"/>
+  <path d="M165 870C186 669 277 574 400 574C523 574 614 669 635 870" stroke="url(#accent)" stroke-width="36" stroke-linecap="round"/>
+  <circle cx="400" cy="330" r="118" stroke="url(#accent)" stroke-width="28"/>
+  <text x="400" y="950" fill="#EDE9FE" font-family="Arial, sans-serif" font-size="30" text-anchor="middle" letter-spacing="8">ADD PROFILE PHOTO</text>
+</svg>
